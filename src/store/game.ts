@@ -13,7 +13,7 @@ type Store = {
 
 export const useGame = create<Store>()(persist((set, get) => ({
   game: null, fastBot: false, feedback: null,
-  start: name => set({ game: E.newGame(name.trim() || 'You', Date.now() >>> 0), feedback: null }),
+  start: name => set({ game: E.newGame(name.trim() || 'Player', Date.now() >>> 0), feedback: null }),
   roll: () => { const g = get().game; if (g?.phase === 'roll') set({ game: E.roll(g) }); },
   answer: correct => {
     const g = get().game; if (!g?.pending) return;

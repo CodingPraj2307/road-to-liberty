@@ -1,4 +1,4 @@
-import type { Source } from './types.ts';
+import type { Source, SourceId } from './types.ts';
 
 export const SOURCES: Source[] = [
   { id: 'henry', title: 'Patrick Henry, "Give Me Liberty" (1775)', url: 'https://www.gilderlehrman.org/sites/default/files/2024-01/Speeches.pdf' },
@@ -12,3 +12,5 @@ export const SOURCES: Source[] = [
   { id: 'brutus1', title: 'Brutus 1', url: 'https://minio.la.utexas.edu/webeditor-files/coretexts/pdf/178720brutus201.pdf' },
   { id: 'centinel1', title: 'Centinel 1', url: 'https://teachingamericanhistory.org/document/centinel-i-2/' },
 ];
+
+export const sourceTitle = (id: SourceId) => SOURCES.find(s => s.id === id)!.title;

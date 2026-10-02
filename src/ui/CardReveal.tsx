@@ -5,8 +5,8 @@ import { GRIEVANCES } from '../data/grievances.ts';
 import { FOUNDERS } from '../data/founders.ts';
 import { CLAUSES } from '../data/clauses.ts';
 import { AMENDMENTS } from '../data/amendments.ts';
-import { SOURCES } from '../data/sources.ts';
-import type { FounderEffect, SourceId } from '../data/types.ts';
+import { sourceTitle } from '../data/sources.ts';
+import type { FounderEffect } from '../data/types.ts';
 import { Dialog } from './QuestionModal.tsx';
 
 const UNFINISHED_MS = 5000;
@@ -20,10 +20,8 @@ const EFFECT: Record<FounderEffect, string> = {
   shield: 'Your next grievance is blocked.',
 };
 
-const sourceTitle = (id: SourceId) => SOURCES.find(s => s.id === id)!.title;
-
 /** Verified text in quotation marks, with where it comes from. */
-function Quote({ text, cite, big = false }: { text: string; cite: string; big?: boolean }) {
+export function Quote({ text, cite, big = false }: { text: string; cite: string; big?: boolean }) {
   return (
     <figure>
       <blockquote className={`border-l-4 border-current pl-4 italic leading-snug ${big ? 'text-[1.4rem]' : ''}`}>&ldquo;{text}&rdquo;</blockquote>
@@ -32,7 +30,7 @@ function Quote({ text, cite, big = false }: { text: string; cite: string; big?: 
   );
 }
 
-const Summary = ({ text }: { text: string }) => <p className="mt-3"><b>Summary:</b> {text}</p>;
+export const Summary = ({ text }: { text: string }) => <p className="mt-3"><b>Summary:</b> {text}</p>;
 
 /** A GRIEVANCE, FOUNDER or UNFINISHED LIBERTY card. The bot's cards are shown without buttons; its driver acknowledges them. */
 export function CardReveal() {

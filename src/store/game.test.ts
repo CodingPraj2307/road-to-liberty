@@ -6,11 +6,11 @@ import { at } from '../engine/testUtils.ts';
 beforeEach(() => useGame.setState({ game: null, feedback: null }));
 
 describe('store', () => {
-  it('start() trims the name, defaulting to You when blank', () => {
+  it('start() trims the name, defaulting to Player when blank', () => {
     useGame.getState().start('  Ana  ');
     expect(useGame.getState().game?.players[0].name).toBe('Ana');
     useGame.getState().start('   ');
-    expect(useGame.getState().game?.players[0].name).toBe('You');
+    expect(useGame.getState().game?.players[0].name).toBe('Player');
   });
 
   it('roll() is a no-op unless phase is roll', () => {
