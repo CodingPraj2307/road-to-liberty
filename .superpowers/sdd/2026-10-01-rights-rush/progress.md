@@ -49,3 +49,7 @@ Task 11: complete (commits 50b3c22..9c52bd8, review clean)
 Task 11: minor (deferred): unfinished 5s not skippable; timeout banner same as wrong; no countdown fake-timer test
 Ruling: blank-name default changes from 'You' to 'Player' — engine logs "X has/rolled" read wrong with 'You' — cost if wrong: one string
 Ruling: spec Founder table + Fed55 row updated to the verified quotes in Task 13 docs pass — cost: none
+Ruling: user needs it ASAP — Tasks 12+13 run in parallel (13 in a worktree, disjoint files), one combined review; Task 14 reviews run in parallel with one fix wave — cost if wrong: merge conflict on README/docs only
+Task 12: implemented (commit 5bd0d2e) — review pending (do combined 12+13 review first in cloud)
+Task 13: implemented (commit 5788c6f, merged from worktree) — review pending
+Ruling: user asked to transfer to cloud after 12+13; combined review of 12+13 deferred to cloud session as step 1 — cost: review later
