@@ -56,3 +56,9 @@ Ruling: user asked to transfer to cloud after 12+13; combined review of 12+13 de
 Task 12+13: complete (commits 9c52bd8..3f2db37, combined review clean — Approved, 0 Critical/Important)
 Task 12+13: minor (folded into Task 14): Quit shown on setup for finished game; header inert blocks Quit under overlays; README deploy step should say create repo first; vitest should exclude .claude/**
 Ruling: cloud session cannot push to GitHub (Claude GitHub App not installed for the repo) — work merges locally; user pushes main — cost if wrong: none
+Task 14: copy + a11y pass (commit 790c02d); deferred copy minors (petition, 4th summary, amendment-10 scenario) fixed
+Ruling: coderabbit:code-review unavailable in cloud session — ran code-review + engineering:code-review in parallel over main..HEAD; they double as the final whole-branch review — cost if wrong: one fewer review seat
+Task 14: fix wave (commits 659c996..471236f) — 1 high (board clipped at 1280x720), 3 medium (deploy perms, save validation + error boundary, token animation sync), 3 low fixed; controller read the fix diff, clean
+Task 14: demo — Fast Bot keyboard-only full game 67.7s / 39 turns, no console errors; est. 5.1 min with Fast Bot off (p90 ≈ 7.5 min)
+Task 14: complete — npm test 61/61, build ok, verify-quotes 41/41, docs/sources.md all ✅
+Task 14: minor (deferred): question timer restarts on reload; no React hook test harness; board fit unverified with real web fonts (labels line-clamp, no overflow)
