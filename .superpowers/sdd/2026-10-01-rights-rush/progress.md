@@ -44,3 +44,8 @@ Task 10: complete (commits 775efa3..50b3c22, review clean) — note: implementer
 Task 10: minor (deferred): log reveals roll before die lands; token pauses on reroll mid-walk; no hook tests; roll detection relies on log-growth invariant
 Ruling: Task 11 also fixes T10 minors 1 (ink shadows via color-mix token), 2 (dice effect re-arm), 3 (key={ev.id} on die), 8 (Space e.repeat guard) — cheap, same files nearby — cost if wrong: small
 Task 11: INTERRUPTED by user (moving to cloud) — partial work committed as WIP at next commit; resume Task 11 by re-dispatching implementer on top of it
+Task 11: fix round 1/5 (2 addressed, 0 open; commits 78565db..9c52bd8)
+Task 11: complete (commits 50b3c22..9c52bd8, review clean)
+Task 11: minor (deferred): unfinished 5s not skippable; timeout banner same as wrong; no countdown fake-timer test
+Ruling: blank-name default changes from 'You' to 'Player' — engine logs "X has/rolled" read wrong with 'You' — cost if wrong: one string
+Ruling: spec Founder table + Fed55 row updated to the verified quotes in Task 13 docs pass — cost: none
