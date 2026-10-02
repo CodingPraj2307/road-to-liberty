@@ -21,6 +21,7 @@ Source texts are fetched once into `sources-cache/<id>.txt` and committed. `npm 
 
 **Findings from checking the sources (2026-10-01):**
 - Brutus 1 and the Centinel 1 excerpt at the given URL do **not** mention a bill of rights or freedom of the press. The Antifederalist card uses quotes that are really there. The "their pressure led to the Bill of Rights" point appears as a labeled summary.
+- The Federalist 55 and Common Sense pages are excerpts. They lack "esteem and confidence" and "begin the world over again", so those two cards use other sentences that are really in the cached pages.
 - The Constitution text uses "Persons," not "slave." The Unfinished Liberty explanations must say this plainly.
 
 ## Board
@@ -68,12 +69,12 @@ Dropped as a stretch: Standing Armies → 2nd/3rd; "swarms of Officers to harras
 |---|---|---|
 | henry | "give me liberty, or give me death!" | forward2 |
 | declaration | "Life, Liberty and the pursuit of Happiness" | forward2 |
-| common-sense | "We have it in our power to begin the world over again" | reroll |
+| common-sense | "O! receive the fugitive, and prepare in time an asylum for mankind." | reroll |
 | fed51 | "Ambition must be made to counteract ambition" | check |
 | fed10 | "Liberty is to faction what air is to fire" | stealDuplicate |
 | centinel1 | "All the blessings of liberty and the dearest privileges of freemen are now at stake" | collectMissing |
 | brutus1 | "In a republic, the manners, sentiments, and interests of the people should be similar." | collectMissing |
-| fed55 | Fed 55 passage on republican government presupposing "esteem and confidence" | shield |
+| fed55 | "I am unable to conceive that the people of America, in their present temper, or under any circumstances which can speedily happen, will choose, and every second year repeat the choice of, sixty-five or a hundred men who would be disposed to form and pursue a scheme of tyranny or treachery." | shield |
 
 ## Content counts
 
