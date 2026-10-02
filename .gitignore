@@ -1,0 +1,17 @@
+.claude-flow/
+.swarm/
+ruvector.db
+.superpowers/
+node_modules/
+dist/
+
+# Vite template
+dist-ssr
+*.local
+logs
+*.log
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+.claude/worktrees/

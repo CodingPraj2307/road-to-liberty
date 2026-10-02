@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+/* Palette and type chosen with ui-ux-pro-max; contrast figures are in the Task 10 report. */
+@theme {
+  --color-parchment: #eadbb4;
+  --color-parchment-light: #f3e8cb;
+  --color-cream: #faf2dc;
+  --color-ink: #1e1810;
+  --color-navy: #1b2c4f;
+  --color-crimson: #861a1f;
+  --color-era-1: #8a2e1c; /* 1775 brick */
+  --color-era-2: #5c4512; /* 1776 umber */
+  --color-era-3: #284b70; /* 1787 slate */
+  --color-era-4: #4f2b5e; /* 1787–88 plum */
+  --color-era-5: #22533b; /* 1789–91 pine */
+
+  --font-display: "IM Fell English SC", Georgia, serif;
+  --font-body: "Libre Caslon Text", Georgia, serif;
+
+  --animate-tumble: tumble 600ms ease-out;
+  @keyframes tumble {
+    0% { transform: rotate(0) scale(1); }
+    30% { transform: rotate(140deg) scale(0.86); }
+    65% { transform: rotate(280deg) scale(0.94); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+}
+
+html {
+  font-size: 18px;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  background-color: var(--color-parchment);
+  /* Aged paper: darker, foxed edges around a lighter middle. */
+  background-image:
+    radial-gradient(ellipse at 50% 45%, transparent 55%, rgb(110 70 20 / 0.22) 100%),
+    radial-gradient(circle at 12% 88%, rgb(140 90 30 / 0.12), transparent 28%),
+    radial-gradient(circle at 92% 8%, rgb(140 90 30 / 0.1), transparent 24%);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-crimson);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+  }
+}
