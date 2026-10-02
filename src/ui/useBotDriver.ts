@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { useGame } from '../store/game.ts';
 import { botCorrect } from '../engine/bot.ts';
 import * as E from '../engine/game.ts';
-import { BOT_RESULT_MS, cardDelayMs } from './motion.ts';
+import { BOT_RESULT_MS, FAST_BOT_RESULT_MS, cardDelayMs } from './motion.ts';
 
-/** How long the bot's card stays on screen before it acts (Unfinished Liberty gets as long as a result card, to read its explanation). */
+/** How long the bot's question card stays on screen before it answers. */
 const BOT_CARD_MS = 1200;
 
 export function useBotDriver() {
@@ -16,8 +16,12 @@ export function useBotDriver() {
   const holdRoll = useGame(s => s.animating && s.game?.phase === 'roll');
   useEffect(() => {
     if (!game || game.phase === 'over' || feedback || holdRoll || !game.players[game.current].isBot) return;
-    const delay = fastBot ? 0 : game.phase === 'roll' ? 500
-      : cardDelayMs(game) + (game.pending!.kind === 'unfinished' ? BOT_RESULT_MS : BOT_CARD_MS);
+    // Question cards are answered quickly (the result card that follows holds the explanation);
+    // Grievance, Founder and Unfinished cards stay up long enough to read their explanation.
+    const question = game.pending?.kind === 'right' || game.pending?.kind === 'whoSaid';
+    const delay = game.phase === 'roll' ? (fastBot ? 0 : 500)
+      : question ? (fastBot ? 0 : cardDelayMs(game) + BOT_CARD_MS)
+      : cardDelayMs(game) + (fastBot ? FAST_BOT_RESULT_MS : BOT_RESULT_MS);
     const t = setTimeout(() => {
       const s = useGame.getState(); const g = s.game!;
       if (g.phase === 'roll') return s.animating ? undefined : s.roll();
