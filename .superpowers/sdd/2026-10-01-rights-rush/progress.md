@@ -53,3 +53,6 @@ Ruling: user needs it ASAP — Tasks 12+13 run in parallel (13 in a worktree, di
 Task 12: implemented (commit 5bd0d2e) — review pending (do combined 12+13 review first in cloud)
 Task 13: implemented (commit 5788c6f, merged from worktree) — review pending
 Ruling: user asked to transfer to cloud after 12+13; combined review of 12+13 deferred to cloud session as step 1 — cost: review later
+Task 12+13: complete (commits 9c52bd8..3f2db37, combined review clean — Approved, 0 Critical/Important)
+Task 12+13: minor (folded into Task 14): Quit shown on setup for finished game; header inert blocks Quit under overlays; README deploy step should say create repo first; vitest should exclude .claude/**
+Ruling: cloud session cannot push to GitHub (Claude GitHub App not installed for the repo) — work merges locally; user pushes main — cost if wrong: none
