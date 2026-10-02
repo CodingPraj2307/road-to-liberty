@@ -25,7 +25,7 @@ function Section({ title, muted = false, children }: { title: string; muted?: bo
   );
 }
 
-/** The recap after someone wins: who won, what each grievance was answered by, the unfinished clauses, and all ten amendments. */
+/** The recap after someone wins: who won, what each grievance was answered by, the unfinished clauses, and all ten amendments (each opens to its explanation and text). */
 export function EndScreen() {
   const game = useGame(s => s.game)!;
   const quit = useGame(s => s.quit);
@@ -116,6 +116,7 @@ export function EndScreen() {
                 <span aria-hidden="true" className="pt-1 font-bold transition-transform group-open:rotate-90">▸</span>
               </summary>
               <div className="px-4 pb-4 pl-[4.5rem]">
+                <p className="mb-3 leading-snug"><b>Why it matters:</b> {am.explain}</p>
                 <Quote text={am.quote} cite={`${sourceTitle(am.source)}, Amendment ${am.n}`} />
               </div>
             </details>

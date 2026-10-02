@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useGame } from '../store/game.ts';
 import { ALL, grievanceBlocker, ord } from '../engine/game.ts';
 import { GRIEVANCES } from '../data/grievances.ts';
@@ -8,8 +7,8 @@ import { AMENDMENTS } from '../data/amendments.ts';
 import { sourceTitle } from '../data/sources.ts';
 import type { FounderEffect } from '../data/types.ts';
 import { Dialog } from './QuestionModal.tsx';
-
-const UNFINISHED_MS = 5000;
+import { PRIMARY } from './Setup.tsx';
+import { useEnter, useFocusOnMount } from './useKeys.ts';
 
 const EFFECT: Record<FounderEffect, string> = {
   forward2: 'Move forward 2 spaces.',
@@ -20,11 +19,11 @@ const EFFECT: Record<FounderEffect, string> = {
   shield: 'Your next grievance is blocked.',
 };
 
-/** Verified text in quotation marks, with where it comes from. */
+/** Verified text in quotation marks, with where it comes from. `big` enlarges a short quote; a long one stays body size so the card fits. */
 export function Quote({ text, cite, big = false }: { text: string; cite: string; big?: boolean }) {
   return (
     <figure>
-      <blockquote className={`border-l-4 border-current pl-4 italic leading-snug ${big ? 'text-[1.4rem]' : ''}`}>&ldquo;{text}&rdquo;</blockquote>
+      <blockquote className={`border-l-4 border-current pl-4 italic leading-snug ${big && text.length <= 140 ? 'text-[1.4rem]' : ''}`}>&ldquo;{text}&rdquo;</blockquote>
       <figcaption className="mt-1 pl-5">{cite}</figcaption>
     </figure>
   );
@@ -40,28 +39,13 @@ export function CardReveal() {
   const player = game.players[game.current];
   const whose = player.isBot ? `${player.name}'s card` : 'Your card';
 
-  useEffect(() => {
-    if (kind !== 'unfinished' || player.isBot) return;
-    const t = setTimeout(() => acknowledge(), UNFINISHED_MS);
-    return () => clearTimeout(t);
-  }, [kind, player.isBot, acknowledge]);
+  // The human reads at their own pace and presses Continue (or Enter, from anywhere); the bot's driver acknowledges its cards.
+  const hasContinue = !player.isBot && !(kind === 'founder' && FOUNDERS[card].effect === 'collectMissing');
+  useEnter(hasContinue ? acknowledge : null);
+  const button = useFocusOnMount<HTMLButtonElement>();
 
-  // Enter continues from anywhere while the card is up, so it can never press a header button (Quit) instead.
-  const hasContinue = !player.isBot && kind !== 'unfinished' && !(kind === 'founder' && FOUNDERS[card].effect === 'collectMissing');
-  useEffect(() => {
-    if (!hasContinue) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Enter' || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
-      e.preventDefault();
-      acknowledge();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [hasContinue, acknowledge]);
-
-  const cont = !player.isBot && (
-    <button type="button" autoFocus onClick={() => acknowledge()}
-      className="mt-5 cursor-pointer self-end rounded-md border-2 border-navy bg-navy px-5 py-2 text-lg font-bold text-cream shadow-[0_3px_0_var(--color-ink)] active:translate-y-[2px] active:shadow-[0_1px_0_var(--color-ink)]">
+  const cont = hasContinue && (
+    <button type="button" ref={button} onClick={() => acknowledge()} className={`mt-4 self-end ${PRIMARY}`}>
       Continue (Enter)
     </button>
   );
@@ -72,6 +56,7 @@ export function CardReveal() {
       <Dialog kind={kind} whose={c.title} muted>
         <Quote text={c.quote} cite={`${sourceTitle(c.source)}, ${c.section}`} />
         <Summary text={c.explain} />
+        {cont}
       </Dialog>
     );
   }

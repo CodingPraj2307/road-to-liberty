@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { useGame } from '../store/game.ts';
 import { botCorrect } from '../engine/bot.ts';
 import * as E from '../engine/game.ts';
-import { cardDelayMs, readMs } from './motion.ts';
+import { BOT_RESULT_MS, cardDelayMs } from './motion.ts';
 
-/** How long the bot's card stays on screen before it acts (unfinished liberty gets its half-length reading time). */
+/** How long the bot's card stays on screen before it acts (Unfinished Liberty gets as long as a result card, to read its explanation). */
 const BOT_CARD_MS = 1200;
 
 export function useBotDriver() {
@@ -17,7 +17,7 @@ export function useBotDriver() {
   useEffect(() => {
     if (!game || game.phase === 'over' || feedback || holdRoll || !game.players[game.current].isBot) return;
     const delay = fastBot ? 0 : game.phase === 'roll' ? 500
-      : cardDelayMs(game) + (game.pending!.kind === 'unfinished' ? readMs(5000, true) : BOT_CARD_MS);
+      : cardDelayMs(game) + (game.pending!.kind === 'unfinished' ? BOT_RESULT_MS : BOT_CARD_MS);
     const t = setTimeout(() => {
       const s = useGame.getState(); const g = s.game!;
       if (g.phase === 'roll') return s.animating ? undefined : s.roll();
