@@ -7,10 +7,11 @@ export function useKeys() {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.target instanceof Element && e.target.closest('input, textarea, select')) return;
       if (e.code === 'Space') {
-        e.preventDefault();
         const { game, roll } = useGame.getState();
-        if (game?.phase === 'roll' && !game.players[game.current].isBot) roll();
-      } else if (e.key === 'f' || e.key === 'F') {
+        if (game?.phase === 'roll' && !game.players[game.current].isBot) { e.preventDefault(); roll(); }
+        // Otherwise let Space activate a focused button or link; elsewhere stop it scrolling the page.
+        else if (!(e.target instanceof Element && e.target.closest('button, a'))) e.preventDefault();
+      } else if ((e.key === 'f' || e.key === 'F') && !e.repeat) {
         if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
         else document.documentElement.requestFullscreen().catch(() => {});
       }
