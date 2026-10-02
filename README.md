@@ -49,15 +49,15 @@ All game content lives in `src/data/`:
 
 | File | Content |
 |---|---|
-| `amendments.ts` | The 10 amendments: summary and verified text |
-| `scenarios.ts` | Right-space scenarios, 3 per amendment |
+| `amendments.ts` | The 10 amendments: summary, explanation and verified text |
+| `scenarios.ts` | Right-space scenarios with explanations, 5 per amendment |
 | `grievances.ts` | Grievance cards and the amendments that answer them |
 | `founders.ts` | Founder cards and their effects |
-| `whoSaid.ts` | Who Said It? questions |
+| `whoSaid.ts` | Who Said It? questions with explanations |
 | `clauses.ts` | Unfinished Liberty clauses |
 | `sources.ts` | The 10 allowed sources |
 
-Every item has a `source` id. Every `quote` must be an unbroken substring of `sources-cache/<source>.txt`, with no ellipses. `npm run verify-quotes` checks this, fails if any quote is not found, and rewrites `docs/sources.md`. CI runs it too, so a bad quote blocks the deploy. Kid-friendly text goes in `summary` or `explain` and is never shown in quotation marks.
+Every item has a `source` id. Every `quote` must be an unbroken substring of `sources-cache/<source>.txt`, with no ellipses. `npm run verify-quotes` checks this, fails if any quote is not found, and rewrites `docs/sources.md`. CI runs it too, so a bad quote blocks the deploy. Kid-friendly text goes in `summary` or `explain` (about 35–70 words, 8th-grade level; the content test allows 20–80) and is never shown in quotation marks.
 
 ## Deploy
 
