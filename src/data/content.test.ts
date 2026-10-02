@@ -33,6 +33,9 @@ describe('content', () => {
   it('never puts quotation marks in kid-friendly text', () => {
     const kid = [...AMENDMENTS.map(a => a.summary), ...CLAUSES.map(c => c.explain), ...GRIEVANCES.map(g => g.explain),
                  ...FOUNDERS.map(f => f.explain), ...SCENARIOS.map(s => s.prompt)];
-    for (const t of kid) expect(t).not.toMatch(/["“”]/);
+    for (const t of kid) {
+      expect(t).not.toMatch(/["“”]/);
+      expect(t.split(/\s+/).length).toBeLessThanOrEqual(25);
+    }
   });
 });

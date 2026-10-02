@@ -10,5 +10,5 @@ export const CLAUSES: Clause[] = [
     explain: 'Here, Persons meant enslaved people, and Congress was not allowed to stop their importation for twenty years, until 1808.' },
   { title: 'The Fugitive Service Clause', source: 'constitution', section: 'Article IV, Section 2',
     quote: 'No Person held to Service or Labour in one State, under the Laws thereof, escaping into another, shall, in Consequence of any Law or Regulation therein, be discharged from such Service or Labour, but shall be delivered up on Claim of the Party to whom such Service or Labour may be due.',
-    explain: 'Here, a Person held to Service or Labour meant an enslaved person, and people who escaped to freedom in another state could be forced back to slavery.' },
+    explain: 'Here, a Person held to Service or Labour meant an enslaved person, and people who escaped to another state could be forced back to slavery.' },
 ];
