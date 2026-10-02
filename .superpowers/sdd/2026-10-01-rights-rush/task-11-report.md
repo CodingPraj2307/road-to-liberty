@@ -79,3 +79,34 @@ WIP commit 15ef912 already had nearly all of Task 11. I kept it and checked it a
 - A timeout shows the same banner as a wrong answer. Feedback cannot tell the two apart, so there is no "Time's up" wording.
 - The Roll button stays clickable while a feedback banner is up. Rolling early is harmless, because the next card waits until feedback clears. I left it as is.
 - Founder card quote for Paine differs from the spec table ("We have it in our power…"). That is data, not this task.
+
+## Fix round 1
+
+### Changes
+1. **(Important) Who Said It? wrong-answer duration.** `feedbackMs` in `src/ui/motion.ts` now returns `correct ? 1000 : 3000` for both `right` and `whoSaid`, so a wrong Who Said It? answer or its timeout stays up 3s. Bot durations still go through `readMs`: halved, and 0 with Fast Bot. `motion.test.ts` gains `expect(fb('whoSaid', false)).toBe(3000)`.
+2. **(Minor) `inert` behind overlays.** In `src/App.tsx`, `covered = showCard || feedback`.
+   - The header and Board are now wrapped in a `<div inert={covered} className="flex min-h-0 flex-1 flex-col">`, which leaves the layout unchanged.
+   - The `<aside>` (Dice, Hands, Log) also gets `inert={covered}`.
+   - Tab therefore cannot reach the Roll button or anything else behind the aria-modal card or the feedback banner.
+   - Side effect: the Roll button can no longer be clicked while a banner is up (one of my earlier notes). Space still rolls through the window key handler, and that roll is harmless as before.
+
+### Commands and output
+`npm test`
+```
+ Test Files  8 passed (8)
+      Tests  50 passed (50)
+```
+`npm run lint` (oxlint): no output, meaning no warnings or errors.
+
+`npm run build`
+```
+dist/assets/index-CxnVBOSc.js   269.91 kB │ gzip: 85.01 kB
+✓ built in 82ms
+```
+
+### Browser check (1280x720, fresh game)
+- **Before the card:** the main wrapper and the aside had inert=false. The Board height was 625px, the same layout as before.
+- **Forced Who Said It? card:** both regions had inert=true and focus was inside the dialog. The only enabled buttons outside an inert subtree were the 3 choices.
+- **Clicked a wrong choice:** the aside stayed inert during the feedback. Feedback cleared after **3056ms** (previously 1500ms), and inert was false afterwards.
+- **Bot:** took its turn normally afterwards.
+- **Console:** no errors.

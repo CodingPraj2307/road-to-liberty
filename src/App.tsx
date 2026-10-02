@@ -28,21 +28,25 @@ export default function App() {
   if (!game) return null;
   // Fast Bot skips the bot's cards entirely; its driver acts on them unseen.
   const showCard = pending && !feedback && !(fastBot && game.players[game.current].isBot);
+  // Keep Tab inside the card or feedback while either covers the board.
+  const covered = !!showCard || !!feedback;
   return (
     <div className="grid h-dvh grid-cols-[minmax(0,7fr)_minmax(0,3fr)] gap-4 overflow-hidden p-4">
       <main className="relative flex min-h-0 flex-col">
-        <header className="mb-1 flex items-end justify-between gap-4 border-b-[5px] border-ink pb-1 shadow-[0_3px_0_var(--color-parchment),0_4px_0_var(--color-ink)]">
-          <h1 className="font-display text-[2.6rem] leading-none text-crimson">Rights Rush</h1>
-          <p className="pb-1 text-right leading-tight">Win: reach Ratified with <b>5 different</b> Amendments</p>
-        </header>
-        <Board />
+        <div inert={covered} className="flex min-h-0 flex-1 flex-col">
+          <header className="mb-1 flex items-end justify-between gap-4 border-b-[5px] border-ink pb-1 shadow-[0_3px_0_var(--color-parchment),0_4px_0_var(--color-ink)]">
+            <h1 className="font-display text-[2.6rem] leading-none text-crimson">Rights Rush</h1>
+            <p className="pb-1 text-right leading-tight">Win: reach Ratified with <b>5 different</b> Amendments</p>
+          </header>
+          <Board />
+        </div>
         {/* Keyed by log length so every new card remounts with a fresh timer and shuffle. */}
         {showCard && (pending.kind === 'right' || pending.kind === 'whoSaid'
           ? <QuestionModal key={game.log.length} />
           : <CardReveal key={game.log.length} />)}
         <Feedback />
       </main>
-      <aside className="flex min-h-0 flex-col gap-3">
+      <aside inert={covered} className="flex min-h-0 flex-col gap-3">
         <Dice />
         <Hands />
         <Log />

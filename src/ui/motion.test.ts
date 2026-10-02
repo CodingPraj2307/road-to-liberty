@@ -31,12 +31,13 @@ describe('motion', () => {
     expect(readMs(3000, false)).toBe(3000);
   });
 
-  it('holds a wrong RIGHT answer 3s, a correct answer 1s, card outcomes 1.5s, and nothing after Unfinished Liberty', () => {
+  it('holds a wrong answer 3s, a correct answer 1s, card outcomes 1.5s, and nothing after Unfinished Liberty', () => {
     const fb = (kind: 'right' | 'whoSaid' | 'grievance' | 'founder' | 'unfinished', correct?: boolean) =>
       feedbackMs({ pending: { kind, card: 0 }, correct });
     expect(fb('right', false)).toBe(3000);
     expect(fb('right', true)).toBe(1000);
     expect(fb('whoSaid', true)).toBe(1000);
+    expect(fb('whoSaid', false)).toBe(3000);
     expect(fb('grievance')).toBe(1500);
     expect(fb('founder')).toBe(1500);
     expect(fb('unfinished')).toBe(0);
