@@ -18,15 +18,15 @@ export function Setup({ onPlay }: { onPlay: () => void }) {
       <div aria-hidden="true" className="mt-3 flex h-2.5 w-full max-w-[26rem]">
         {ERAS.map(c => <span key={c} className={`flex-1 ${c}`} />)}
       </div>
-      <p className="mt-5 text-[1.2rem] leading-snug">Roll the die (Space) and play your card. Answer Right cards to collect Amendments.</p>
-      <p className="mt-1 text-[1.2rem] leading-snug">Reach Bill of Rights Ratified with <b>5 different</b> Amendments before the Computer to win.</p>
+      <p className="mt-5 text-[1.2rem] leading-snug">Press Space to roll the die, then follow the card for the space you land on. Answer Right questions to collect Amendments.</p>
+      <p className="mt-1 text-[1.2rem] leading-snug">To win, reach Bill of Rights Ratified with <b>5 different</b> Amendments before the Computer does.</p>
 
       <form className="mt-6 flex w-full max-w-[32rem] flex-col gap-4 rounded-md border-[3px] border-ink bg-cream px-7 py-5 text-left shadow-[0_6px_0_var(--color-ink)]"
         onSubmit={e => { e.preventDefault(); useGame.getState().start(name); onPlay(); }}>
         <label className="flex flex-col gap-1 font-bold">
           Your name
           <input value={name} onChange={e => setName(e.target.value)} maxLength={20} placeholder="Player" autoComplete="off"
-            autoFocus={!saved} className="rounded-md border-2 border-ink bg-parchment-light px-3 py-1.5 text-[1.2rem] font-normal placeholder:text-ink/55" />
+            autoFocus={!saved} className="rounded-md border-2 border-ink bg-parchment-light px-3 py-1.5 text-[1.2rem] font-normal placeholder:text-ink/70" />
         </label>
         <label className="flex cursor-pointer items-center gap-3">
           <input type="checkbox" checked={fastBot} onChange={e => setFastBot(e.target.checked)} className="size-5 accent-navy" />

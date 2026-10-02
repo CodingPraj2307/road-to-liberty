@@ -16,14 +16,14 @@ export function Dialog({ kind, whose, aside, muted = false, children }: {
   kind: SpaceKind; whose: string; aside?: ReactNode; muted?: boolean; children: ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const titleId = useId();
+  const titleId = useId(), bodyId = useId();
   useEffect(() => {
     // An autoFocus button inside has already taken focus; otherwise focus the card itself.
     if (!ref.current?.contains(document.activeElement)) ref.current?.focus();
   }, []);
   return (
     <div className="absolute inset-0 z-20 grid place-items-center bg-ink/45 p-4">
-      <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1}
+      <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={bodyId} tabIndex={-1}
         className={`flex max-h-full w-full max-w-[48rem] flex-col overflow-y-auto rounded-md border-[3px] px-7 pt-4 pb-5 outline-none ${
           muted ? 'border-ink/60 bg-parchment-light' : 'border-ink bg-cream shadow-[0_6px_0_var(--color-ink)]'}`}>
         <header className={`mb-3 flex items-end gap-3 pb-2 ${muted ? 'border-b-2 border-ink/50'
@@ -33,7 +33,8 @@ export function Dialog({ kind, whose, aside, muted = false, children }: {
           <span className="ml-auto pb-0.5 text-right leading-tight">{whose}</span>
           {aside}
         </header>
-        {children}
+        {/* Read out with the card's name, so a screen reader hears the card even when focus lands on its button. */}
+        <div id={bodyId} className="contents">{children}</div>
       </div>
     </div>
   );

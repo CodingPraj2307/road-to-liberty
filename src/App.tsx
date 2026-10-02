@@ -17,17 +17,19 @@ import { cardDelayMs, useShownPending } from './ui/motion.ts';
 /** How long the final board stays up after the winning move lands, before the recap. */
 const END_HOLD_MS = 1500;
 
-/** On every screen: full screen (same as F) and, while there is a game, Quit. `title` is off on the title screen. */
-function Header({ title = true, inert, children }: { title?: boolean; inert?: boolean; children?: ReactNode }) {
-  const hasGame = useGame(s => !!s.game);
-  const quit = () => { if (confirm('Quit this game? It cannot be resumed.')) useGame.getState().quit(); };
+/**
+ * On every screen: full screen (same as F) and, off the title screen, Quit. `title` is off on the title screen.
+ * `inert` covers only the title and `children` while a card is up; the buttons stay usable so a class can always quit.
+ */
+function Header({ title = true, canQuit = false, inert, children }: { title?: boolean; canQuit?: boolean; inert?: boolean; children?: ReactNode }) {
+  const quit = () => { if (confirm('Quit this game? You cannot resume it.')) useGame.getState().quit(); };
   return (
-    <header inert={inert} className={`flex items-end gap-4 pb-1 ${title ? 'mb-1 border-b-[5px] border-ink shadow-[0_3px_0_var(--color-parchment),0_4px_0_var(--color-ink)]' : ''}`}>
-      {title && <h1 className="font-display text-[2.6rem] leading-none text-crimson">Rights Rush</h1>}
+    <header className={`flex items-end gap-4 pb-1 ${title ? 'mb-1 border-b-[5px] border-ink shadow-[0_3px_0_var(--color-parchment),0_4px_0_var(--color-ink)]' : ''}`}>
+      {title && <h1 inert={inert} className="font-display text-[2.6rem] leading-none text-crimson">Rights Rush</h1>}
       <div className="ml-auto flex items-end gap-3">
-        {children}
+        {children && <div inert={inert}>{children}</div>}
         <button type="button" onClick={toggleFullscreen} className={SECONDARY}>Full screen (F)</button>
-        {hasGame && <button type="button" onClick={quit} className={SECONDARY}>Quit</button>}
+        {canQuit && <button type="button" onClick={quit} className={SECONDARY}>Quit</button>}
       </div>
     </header>
   );
@@ -42,11 +44,11 @@ function Play() {
   const fastBot = useGame(s => s.fastBot);
   // Fast Bot skips the bot's cards entirely; its driver acts on them unseen.
   const showCard = pending && !feedback && !(fastBot && game.players[game.current].isBot);
-  // Keep Tab inside the card or feedback while either covers the board.
+  // Keep Tab on the card (plus the header buttons) while a card or feedback covers the board.
   const covered = !!showCard || !!feedback;
   return (
     <div className="flex h-dvh flex-col overflow-hidden p-4">
-      <Header inert={covered}>
+      <Header canQuit inert={covered}>
         <p className="pb-1 text-right leading-tight">Win: reach Ratified with <b>5 different</b> Amendments</p>
       </Header>
       <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,7fr)_minmax(0,3fr)] gap-4 pt-2">
@@ -58,8 +60,9 @@ function Play() {
             : <CardReveal key={game.log.length} />)}
           <Feedback />
         </main>
-        <aside inert={covered} className="flex min-h-0 flex-col gap-3">
-          <Dice />
+        {/* Only the Roll button is inert under a card; the log stays live so screen readers still hear each move. */}
+        <aside className="flex min-h-0 flex-col gap-3">
+          <div inert={covered}><Dice covered={covered} /></div>
           <Hands />
           <Log />
         </aside>
@@ -87,7 +90,7 @@ export default function App() {
   if (screen === 'play') return <Play />;
   return (
     <div className="min-h-dvh p-4">
-      <Header title={screen !== 'setup'} />
+      <Header title={screen !== 'setup'} canQuit={screen !== 'setup'} />
       {screen === 'setup' ? <Setup onPlay={() => setPlaying(true)} /> : <EndScreen />}
     </div>
   );

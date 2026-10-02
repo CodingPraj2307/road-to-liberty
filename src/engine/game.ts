@@ -37,7 +37,7 @@ function finish(g: GameState) {
     g.log.push(`${p.name} reached Bill of Rights Ratified and wins!`);
   } else {
     p.pos = ERA4_START;
-    g.log.push(`${p.name} needs 5 different Amendments. Back to Era 4!`);
+    g.log.push(`${p.name} needs 5 different Amendments. Back to the start of Era 4!`);
   }
 }
 
@@ -83,7 +83,7 @@ export function answer(s: GameState, correct: boolean): GameState {
     if (correct) gain(g, g.current, SCENARIOS[pd.card].amendment);
     else g.log.push(`${cur(g).name} missed it. The answer was the ${ord(SCENARIOS[pd.card].amendment)} Amendment.`);
   } else if (correct) {
-    g.log.push(`${cur(g).name} knew who said it! Forward 1.`);
+    g.log.push(`${cur(g).name} knew who said it! Forward 1 space.`);
     moveBy(g, 1);
   } else {
     g.log.push(`${cur(g).name} guessed wrong on Who Said It.`);
@@ -110,8 +110,8 @@ export function acknowledge(s: GameState, pick?: Amendment): GameState {
     if (!g.grievancesDrawn.includes(pd.card)) g.grievancesDrawn.push(pd.card);
     const by = grievanceBlocker(p, pd.card);
     if (by === 'shield') { p.shielded = false; g.log.push(`${p.name} was protected by Federalist 55.`); }
-    else if (by) g.log.push(`Blocked! The ${ord(by)} Amendment fixed this.`);
-    else { g.log.push(`${p.name} has no right to block it. Back 2.`); moveBy(g, -2); }
+    else if (by) g.log.push(`Blocked! The ${ord(by)} Amendment fixed this grievance.`);
+    else { g.log.push(`${p.name} has no amendment to block it. Back 2 spaces.`); moveBy(g, -2); }
   } else {
     const f = FOUNDERS[pd.card];
     g.log.push(`${p.name} drew ${f.speaker}.`);

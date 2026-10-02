@@ -63,9 +63,10 @@ Every item has a `source` id. Every `quote` must be an unbroken substring of `so
 
 The site is served from GitHub Pages at `/road-to-liberty/` (set as the Vite `base`).
 
-1. Push `main` to https://github.com/CodingPraj2307/road-to-liberty.
-2. In the repo, go to Settings → Pages → Source and choose **GitHub Actions**.
-3. The `Deploy` workflow runs on every push to `main` and can be started by hand from the Actions tab (`workflow_dispatch`). It runs tests, `verify-quotes` and the build, then publishes `dist/`.
+1. Create the GitHub repo `road-to-liberty` (https://github.com/CodingPraj2307/road-to-liberty).
+2. Push `main` to it.
+3. In the repo, go to Settings → Pages → Source and choose **GitHub Actions**.
+4. The `Deploy` workflow runs on every push to `main` and can be started by hand from the Actions tab (`workflow_dispatch`). It runs tests, `verify-quotes` and the build, then publishes `dist/`.
 
 ## Sources
 

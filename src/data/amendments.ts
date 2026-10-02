@@ -13,7 +13,7 @@ export const AMENDMENTS: AmendmentCard[] = [
     summary: "The government cannot make you house soldiers in your home during peacetime." },
   { n: 4, title: "No Unreasonable Searches", source: 'bill-of-rights', section: 'Amendment IV',
     quote: "The right of the people to be secure in their persons, houses, papers, and effects, against unreasonable searches and seizures, shall not be violated, and no Warrants shall issue, but upon probable cause, supported by Oath or affirmation, and particularly describing the place to be searched, and the persons or things to be seized.",
-    summary: "Police need a good reason and a warrant to search you or your home or take your things." },
+    summary: "Government officials, like police, need a good reason, and usually a warrant, to search you or your home or take your things." },
   { n: 5, title: "Rights When Accused", source: 'bill-of-rights', section: 'Amendment V',
     quote: "No person shall be held to answer for a capital, or otherwise infamous crime, unless on a presentment or indictment of a Grand Jury, except in cases arising in the land or naval forces, or in the Militia, when in actual service in time of War or public danger; nor shall any person be subject for the same offence to be twice put in jeopardy of life or limb; nor shall be compelled in any criminal case to be a witness against himself, nor be deprived of life, liberty, or property, without due process of law; nor shall private property be taken for public use, without just compensation.",
     summary: "You cannot be punished without a fair legal process, and you cannot be forced to testify against yourself." },

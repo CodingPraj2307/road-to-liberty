@@ -10,7 +10,7 @@ export const GRIEVANCES: Grievance[] = [
   { ...s, quote: 'For transporting us beyond Seas to be tried for pretended offences', answers: [6],
     explain: 'Colonists were shipped overseas for trial, so the Sixth Amendment promises a trial by a jury from the state and district where the crime happened.' },
   { ...s, quote: 'Our repeated Petitions have been answered only by repeated injury', answers: [1],
-    explain: 'The king ignored the colonists when they asked for help, so the First Amendment protects the right to petition the government.' },
+    explain: 'Each time the colonists petitioned the king, he answered with more harm, so the First Amendment protects the right to petition the government.' },
   { ...s, quote: 'For protecting them, by a mock Trial, from punishment for any Murders', answers: [6],
     explain: 'Soldiers got fake trials that let them avoid punishment, so the Sixth Amendment demands a speedy, public, and impartial trial.' },
 ];

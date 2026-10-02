@@ -14,7 +14,7 @@ const UNFINISHED_MS = 5000;
 const EFFECT: Record<FounderEffect, string> = {
   forward2: 'Move forward 2 spaces.',
   reroll: 'Roll again.',
-  check: "Your opponent's next gain is cancelled.",
+  check: "Your opponent's next amendment is cancelled.",
   stealDuplicate: 'Take a duplicate amendment from your opponent. No duplicates? Move forward 1.',
   collectMissing: 'Collect any amendment you are missing.',
   shield: 'Your next grievance is blocked.',
@@ -76,7 +76,7 @@ export function CardReveal() {
             <Quote text={AMENDMENTS[by - 1].quote} cite={`${sourceTitle('bill-of-rights')}, ${ord(by)} Amendment`} />
           </> : by === 'shield'
             ? <p className="font-display text-[1.7rem] leading-tight text-navy">Federalist 55 protects {you}</p>
-            : <p className="font-display text-[1.7rem] leading-tight text-crimson">No right to block it: back 2 spaces</p>}
+            : <p className="font-display text-[1.7rem] leading-tight text-crimson">No amendment blocks it: move back 2 spaces</p>}
         </div>
         <Summary text={g.explain} />
         {cont}
@@ -101,7 +101,7 @@ export function CardReveal() {
               return (
                 <button key={a} type="button" disabled={!can} autoFocus={a === missing[0]} onClick={() => acknowledge(a)}
                   aria-label={`${ord(a)} Amendment${can ? '' : ' (already held)'}`}
-                  className="grid size-12 cursor-pointer place-items-center rounded-full border-2 border-navy bg-navy text-lg font-bold text-cream shadow-[0_3px_0_var(--color-ink)] active:translate-y-[2px] disabled:cursor-not-allowed disabled:border-dashed disabled:border-ink/50 disabled:bg-transparent disabled:text-ink/60 disabled:shadow-none">
+                  className="grid size-12 cursor-pointer place-items-center rounded-full border-2 border-navy bg-navy text-lg font-bold text-cream shadow-[0_3px_0_var(--color-ink)] active:translate-y-[2px] disabled:cursor-not-allowed disabled:border-dashed disabled:border-ink/60 disabled:bg-transparent disabled:text-ink/75 disabled:shadow-none">
                   {a}
                 </button>
               );

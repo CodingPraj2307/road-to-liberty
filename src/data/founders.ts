@@ -13,7 +13,7 @@ export const FOUNDERS: FounderCard[] = [
     explain: 'Paine said America could be a safe home for freedom. Take a fresh start and roll again.' },
   { source: 'fed51', section: 'Federalist No. 51', speaker: 'James Madison', effect: 'check',
     quote: 'Ambition must be made to counteract ambition',
-    explain: 'Madison wanted each branch of government to keep the others in check. Cancel your opponent\'s next gain.' },
+    explain: 'Madison wanted each branch of government to keep the others in check. Cancel the next amendment your opponent would collect.' },
   { source: 'fed10', section: 'Federalist No. 10', speaker: 'James Madison', effect: 'stealDuplicate',
     quote: 'Liberty is to faction what air is to fire',
     explain: 'Madison worried that powerful groups could crush other people\'s rights. Take a duplicate amendment from your opponent, or move forward 1.' },

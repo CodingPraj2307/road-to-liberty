@@ -38,18 +38,18 @@ function outcome({ fb, before, after }: Snap): Outcome {
   }
   if (kind === 'whoSaid') {
     const src = `It's from ${SOURCES.find(s => s.id === WHO_SAID[card].source)!.title}.`;
-    return fb.correct ? { good: true, title: 'Correct! Forward 1', body: src } : { good: false, title: 'Not this time', body: src };
+    return fb.correct ? { good: true, title: 'Correct! Forward 1 space', body: src } : { good: false, title: 'Not quite', body: src };
   }
   if (kind === 'grievance') {
     const by = grievanceBlocker(b, card);
     if (by === 'shield') return { good: true, title: 'Shielded!', body: 'Federalist 55 blocked this grievance.' };
-    if (by) return { good: true, title: 'Blocked!', body: `The ${ord(by)} Amendment fixed this.` };
-    return { good: false, title: 'Back 2 spaces', body: `${subj(b)} had no right to block it.` };
+    if (by) return { good: true, title: 'Blocked!', body: `The ${ord(by)} Amendment blocked this grievance.` };
+    return { good: false, title: 'Back 2 spaces', body: `${subj(b)} had no amendment to block it.` };
   }
   switch (FOUNDERS[card].effect) {
     case 'forward2': return { good: true, title: 'Forward 2 spaces' };
     case 'reroll': return { good: true, title: 'Roll again!' };
-    case 'check': return { good: true, title: 'Check!', body: `${poss(opp)} next gain is cancelled.` };
+    case 'check': return { good: true, title: 'Check!', body: `${poss(opp)} next amendment is cancelled.` };
     case 'shield': return { good: true, title: 'Shield up', body: `${poss(b)} next grievance is blocked.` };
     case 'stealDuplicate':
       if (gained) return { good: true, title: `Took the ${ord(gained)} Amendment`, body: `${subj(b)} took it from ${subj(opp)}.` };

@@ -88,8 +88,10 @@ export function Board() {
           {BOARD.map((s, i) => {
             const { row, col } = cellOf(i);
             const special = s.kind === 'start' || s.kind === 'finish';
+            // The tokens are drawn aria-hidden, so the space itself says who is on it.
+            const here = game.players.filter((_, p) => shown[p] === i).map(p => p.name);
             return (
-              <li key={i} aria-label={`Space ${i}, Era ${s.era}, ${LABEL[s.kind]}`}
+              <li key={i} aria-label={`Space ${i}, Era ${s.era}, ${LABEL[s.kind]}${here.length ? `: ${here.join(' and ')} here` : ''}`}
                 style={{ gridRow: row + 1, gridColumn: col + 1 }} className="p-[5px]">
                 <div
                   className={`flex h-full flex-col items-center rounded-md border-2 px-1 pt-0.5 pb-1 text-center shadow-[0_2px_0_color-mix(in_oklab,var(--color-ink)_35%,transparent)] ${
