@@ -21,6 +21,13 @@ export function readMs(base: number, isBot: boolean): number {
   return useGame.getState().fastBot ? 0 : base / 2;
 }
 
+/** How long the result of an answer or card stays up for the human (pass it through readMs for the bot). */
+export function feedbackMs({ pending: { kind }, correct }: { pending: Pending; correct?: boolean }): number {
+  if (kind === 'right') return correct ? 1000 : 3000;
+  if (kind === 'whoSaid') return correct ? 1000 : 1500;
+  return kind === 'unfinished' ? 0 : 1500; // Unfinished Liberty was already on screen for 5s.
+}
+
 /** Time from a roll until its die has landed and the token has finished walking to the card's space. */
 export function cardDelayMs(g: GameState): number {
   const isBot = g.players[g.current].isBot;

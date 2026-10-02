@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { animMs, cardDelayMs, cellOf, readMs } from './motion.ts';
+import { animMs, cardDelayMs, cellOf, feedbackMs, readMs } from './motion.ts';
 import { at } from '../engine/testUtils.ts';
 import { useGame } from '../store/game.ts';
 
@@ -29,6 +29,17 @@ describe('motion', () => {
     useGame.setState({ fastBot: true });
     expect(readMs(3000, true)).toBe(0);
     expect(readMs(3000, false)).toBe(3000);
+  });
+
+  it('holds a wrong RIGHT answer 3s, a correct answer 1s, card outcomes 1.5s, and nothing after Unfinished Liberty', () => {
+    const fb = (kind: 'right' | 'whoSaid' | 'grievance' | 'founder' | 'unfinished', correct?: boolean) =>
+      feedbackMs({ pending: { kind, card: 0 }, correct });
+    expect(fb('right', false)).toBe(3000);
+    expect(fb('right', true)).toBe(1000);
+    expect(fb('whoSaid', true)).toBe(1000);
+    expect(fb('grievance')).toBe(1500);
+    expect(fb('founder')).toBe(1500);
+    expect(fb('unfinished')).toBe(0);
   });
 
   it('waits for the die and every token step before showing a card', () => {

@@ -7,20 +7,13 @@ import { FOUNDERS } from '../data/founders.ts';
 import { AMENDMENTS } from '../data/amendments.ts';
 import { SOURCES } from '../data/sources.ts';
 import type { GameState, Player } from '../engine/types.ts';
-import { readMs } from './motion.ts';
+import { feedbackMs, readMs } from './motion.ts';
 
 type Snap = { fb: Fb; before: GameState; after: GameState; ms: number };
 type Outcome = { good: boolean; title: string; body?: ReactNode };
 
 const subj = (p: Player) => (p.isBot ? p.name : 'You');
 const poss = (p: Player) => (p.isBot ? `${p.name}'s` : 'Your');
-
-/** How long each result stays up for the human; the bot gets half, and none with Fast Bot. */
-function baseMs({ pending: { kind }, correct }: Fb) {
-  if (kind === 'right') return correct ? 1000 : 3000;
-  if (kind === 'whoSaid') return correct ? 1000 : 1500;
-  return kind === 'unfinished' ? 0 : 1500;
-}
 
 /** What happened, read off the acting player before and after the action. */
 function outcome({ fb, before, after }: Snap): Outcome {
@@ -76,7 +69,7 @@ export function Feedback() {
   useEffect(() => useGame.subscribe((s, prev) => {
     if (s.feedback && s.feedback !== prev.feedback && prev.game && s.game) {
       const fb = s.feedback;
-      setSnap({ fb, before: prev.game, after: s.game, ms: readMs(baseMs(fb), prev.game.players[fb.who].isBot) });
+      setSnap({ fb, before: prev.game, after: s.game, ms: readMs(feedbackMs(fb), prev.game.players[fb.who].isBot) });
     }
   }), []);
 

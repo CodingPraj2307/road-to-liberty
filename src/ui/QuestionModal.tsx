@@ -22,11 +22,11 @@ export function Dialog({ kind, whose, aside, muted = false, children }: {
     if (!ref.current?.contains(document.activeElement)) ref.current?.focus();
   }, []);
   return (
-    <div className="absolute inset-0 z-20 grid place-items-center bg-ink/45 p-6">
+    <div className="absolute inset-0 z-20 grid place-items-center bg-ink/45 p-4">
       <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1}
         className={`flex max-h-full w-full max-w-[48rem] flex-col overflow-y-auto rounded-md border-[3px] px-7 pt-4 pb-5 outline-none ${
           muted ? 'border-ink/60 bg-parchment-light' : 'border-ink bg-cream shadow-[0_6px_0_var(--color-ink)]'}`}>
-        <header className={`mb-4 flex items-end gap-3 pb-2 ${muted ? 'border-b-2 border-ink/50'
+        <header className={`mb-3 flex items-end gap-3 pb-2 ${muted ? 'border-b-2 border-ink/50'
           : 'border-b-[5px] border-ink shadow-[0_3px_0_var(--color-cream),0_4px_0_var(--color-ink)]'}`}>
           <Icon kind={kind} className={`size-10 shrink-0 ${muted ? 'text-ink/70' : 'text-crimson'}`} />
           <h2 id={titleId} className="font-display text-[2.2rem] leading-none">{LABEL[kind]}</h2>

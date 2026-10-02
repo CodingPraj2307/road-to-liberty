@@ -72,11 +72,10 @@ export function CardReveal() {
     return (
       <Dialog kind={kind} whose={whose}>
         <Quote big text={g.quote} cite={sourceTitle(g.source)} />
-        <div className={`mt-4 rounded-md border-2 px-4 py-3 ${by ? 'border-navy' : 'border-crimson'}`}>
+        <div className={`mt-3 rounded-md border-2 px-4 py-2 ${by ? 'border-navy' : 'border-crimson'}`}>
           {typeof by === 'number' ? <>
-            <p className="font-display text-[1.7rem] leading-tight text-navy">The Bill of Rights fixed this!</p>
-            <p className="mb-2 font-bold">{ord(by)} Amendment</p>
-            <Quote text={AMENDMENTS[by - 1].quote} cite={`${sourceTitle('bill-of-rights')}, ${AMENDMENTS[by - 1].section}`} />
+            <p className="mb-1 font-display text-[1.7rem] leading-tight text-navy">The Bill of Rights fixed this!</p>
+            <Quote text={AMENDMENTS[by - 1].quote} cite={`${sourceTitle('bill-of-rights')}, ${ord(by)} Amendment`} />
           </> : by === 'shield'
             ? <p className="font-display text-[1.7rem] leading-tight text-navy">Federalist 55 protects {you}</p>
             : <p className="font-display text-[1.7rem] leading-tight text-crimson">No right to block it: back 2 spaces</p>}
@@ -92,7 +91,7 @@ export function CardReveal() {
   return (
     <Dialog kind={kind} whose={whose}>
       <p className="font-display text-[1.7rem] leading-none">{f.speaker}</p>
-      <div className="mt-2"><Quote big text={f.quote} cite={`${sourceTitle(f.source)}, ${f.section}`} /></div>
+      <div className="mt-2"><Quote big text={f.quote} cite={sourceTitle(f.source)} /></div>
       <Summary text={f.explain} />
       <p className="mt-3 text-[1.25rem] font-bold text-crimson">{EFFECT[f.effect]}</p>
       {f.effect === 'collectMissing' && !player.isBot ? (
