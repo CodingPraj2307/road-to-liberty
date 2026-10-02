@@ -17,11 +17,12 @@ export function Dice() {
   const tumbling = !!ev && ms > 0 && ev.id !== settled;
 
   useEffect(() => {
-    if (!ev || !ms) return;
-    const iv = setInterval(() => setFace(1 + Math.floor(Math.random() * 6)), 90);
+    // Once a roll has settled, a later `ms` change (the Fast Bot toggle) must not tumble it again.
+    if (!ev || ev.id === settled) return;
+    const iv = ms ? setInterval(() => setFace(1 + Math.floor(Math.random() * 6)), 90) : undefined;
     const to = setTimeout(() => setSettled(ev.id), ms);
     return () => { clearInterval(iv); clearTimeout(to); };
-  }, [ev, ms]);
+  }, [ev, ms, settled]);
 
   const player = game.players[game.current];
   const canRoll = game.phase === 'roll' && !player.isBot;
@@ -32,6 +33,7 @@ export function Dice() {
   return (
     <section aria-label="Dice" className="flex items-center gap-4 rounded-md border-2 border-ink bg-parchment-light p-3">
       <div
+        key={ev?.id}
         role="img"
         aria-label={tumbling ? 'Rolling' : value ? `Die shows ${value}` : 'Not rolled yet'}
         className={`grid size-[5.25rem] shrink-0 grid-cols-3 grid-rows-3 gap-1 rounded-xl border-[3px] border-ink bg-cream p-2.5 shadow-[0_4px_0_var(--color-ink)] ${tumbling ? 'animate-tumble' : ''}`}

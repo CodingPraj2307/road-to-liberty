@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useGame } from '../store/game.ts';
+import type { GameState, Pending, SpaceKind } from '../engine/types.ts';
 
 export const DICE_MS = 600;
 export const STEP_MS = 150;
@@ -13,6 +14,36 @@ export function animMs(base: number, isBot: boolean): number {
   if (!isBot) return base;
   return useGame.getState().fastBot ? 0 : base / 2;
 }
+
+/** How long to show text: half as long for the bot, and not at all with Fast Bot. Reduced motion does not shorten reading time. */
+export function readMs(base: number, isBot: boolean): number {
+  if (!isBot) return base;
+  return useGame.getState().fastBot ? 0 : base / 2;
+}
+
+/** Time from a roll until its die has landed and the token has finished walking to the card's space. */
+export function cardDelayMs(g: GameState): number {
+  const isBot = g.players[g.current].isBot;
+  return animMs(DICE_MS, isBot) + (g.lastRoll ?? 0) * animMs(STEP_MS, isBot);
+}
+
+/** The pending card, once the animations that led to it have finished; null until then. */
+export function useShownPending(): Pending | null {
+  const pending = useGame(s => s.game?.pending ?? null);
+  const [shown, setShown] = useState<Pending | null>(null);
+  useEffect(() => {
+    if (!pending) return;
+    const t = setTimeout(() => setShown(pending), cardDelayMs(useGame.getState().game!));
+    return () => clearTimeout(t);
+  }, [pending]);
+  return shown === pending ? pending : null;
+}
+
+/** Display name of each kind of space, shared by the board and the cards. */
+export const LABEL: Record<SpaceKind, string> = {
+  start: 'Start', right: 'Right', grievance: 'Grievance', founder: 'Founder',
+  whoSaid: 'Who Said It?', unfinished: 'Unfinished Liberty', finish: 'Bill of Rights Ratified',
+};
 
 /** Board cell of a space: rows run left-to-right, then right-to-left (serpentine). */
 export function cellOf(i: number) {

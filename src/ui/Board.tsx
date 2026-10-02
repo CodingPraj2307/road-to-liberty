@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useGame } from '../store/game.ts';
 import { BOARD } from '../engine/board.ts';
 import type { GameState, SpaceKind } from '../engine/types.ts';
-import { DICE_MS, STEP_MS, animMs, cellOf, useRollEvent } from './motion.ts';
+import { DICE_MS, LABEL, STEP_MS, animMs, cellOf, useRollEvent } from './motion.ts';
 
 const ERAS = [
   { year: '1775', title: "Henry's Speech" },
@@ -15,11 +15,6 @@ const ERA_BG = ['bg-era-1', 'bg-era-2', 'bg-era-3', 'bg-era-4', 'bg-era-5'];
 const ERA_BORDER = ['border-era-1', 'border-era-2', 'border-era-3', 'border-era-4', 'border-era-5'];
 const ERA_TEXT = ['text-era-1', 'text-era-2', 'text-era-3', 'text-era-4', 'text-era-5'];
 
-const LABEL: Record<SpaceKind, string> = {
-  start: 'Start', right: 'Right', grievance: 'Grievance', founder: 'Founder',
-  whoSaid: 'Who Said It?', unfinished: 'Unfinished Liberty', finish: 'Bill of Rights Ratified',
-};
-
 const ICON: Record<SpaceKind, ReactNode> = {
   start: <path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6l-5.4 2.9 1.2-6-4.5-4.2 6.1-.7z" />,
   right: <><path d="M8 4h10v13a3 3 0 0 1-3 3H6a3 3 0 0 1 0-6h2z" /><path d="M8 4a2 2 0 0 0-4 0v1h4M11 9h4M11 13h4" /></>,
@@ -30,7 +25,7 @@ const ICON: Record<SpaceKind, ReactNode> = {
   finish: <><path d="M6 17v-6a6 6 0 0 1 12 0v6l2 2H4z" /><path d="M10 21a2 2 0 0 0 4 0M12 3v2" /></>,
 };
 
-function Icon({ kind, className }: { kind: SpaceKind; className: string }) {
+export function Icon({ kind, className }: { kind: SpaceKind; className: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className}>
@@ -97,7 +92,7 @@ export function Board() {
               <li key={i} aria-label={`Space ${i}, Era ${s.era}, ${LABEL[s.kind]}`}
                 style={{ gridRow: row + 1, gridColumn: col + 1 }} className="p-[5px]">
                 <div
-                  className={`flex h-full flex-col items-center rounded-md border-2 px-1 pt-0.5 pb-1 text-center shadow-[0_2px_0_rgb(30_24_16/0.35)] ${
+                  className={`flex h-full flex-col items-center rounded-md border-2 px-1 pt-0.5 pb-1 text-center shadow-[0_2px_0_color-mix(in_oklab,var(--color-ink)_35%,transparent)] ${
                     special
                       ? `${s.kind === 'start' ? 'bg-navy border-navy' : 'bg-crimson border-crimson'} text-cream`
                       : `${ERA_BORDER[s.era - 1]} border-t-[6px] text-ink`}`}
@@ -121,7 +116,7 @@ export function Board() {
             return (
               <div key={i} className="absolute top-0 left-0 h-1/5 w-1/6"
                 style={{ transform: `translate(${col * 100}%, ${row * 100}%)`, transition: `transform ${ms}ms linear` }}>
-                <span className={`absolute top-0.5 grid size-9 place-items-center border-[3px] border-cream font-display text-xl text-cream shadow-[0_3px_0_rgb(30_24_16/0.55)] ${
+                <span className={`absolute top-0.5 grid size-9 place-items-center border-[3px] border-cream font-display text-xl text-cream shadow-[0_3px_0_color-mix(in_oklab,var(--color-ink)_55%,transparent)] ${
                   i === 0 ? 'right-1 rounded-full bg-navy' : `${shown[0] === shown[1] ? 'right-[2.6rem]' : 'right-1'} rounded-md bg-crimson`} ${
                   game.current === i && game.phase !== 'over' ? 'ring-[3px] ring-ink' : ''}`}>
                   {p.name.charAt(0).toUpperCase()}
