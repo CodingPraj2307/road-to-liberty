@@ -11,9 +11,9 @@ import { LABEL } from './motion.ts';
 
 const TIME_S = 20;
 
-/** The printed card that sits over the board. Focus moves into it when it opens. */
-export function Dialog({ kind, whose, aside, muted = false, children }: {
-  kind: SpaceKind; whose: string; aside?: ReactNode; muted?: boolean; children: ReactNode;
+/** The printed card that sits over the board, titled with its kind of space unless `title` is given. Focus moves into it when it opens; a tall card scrolls inside itself. */
+export function Dialog({ kind, whose, title = LABEL[kind], titleClass = '', aside, muted = false, children }: {
+  kind: SpaceKind; whose: string; title?: string; titleClass?: string; aside?: ReactNode; muted?: boolean; children: ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const titleId = useId(), bodyId = useId();
@@ -29,7 +29,7 @@ export function Dialog({ kind, whose, aside, muted = false, children }: {
         <header className={`mb-3 flex items-end gap-3 pb-2 ${muted ? 'border-b-2 border-ink/50'
           : 'border-b-[5px] border-ink shadow-[0_3px_0_var(--color-cream),0_4px_0_var(--color-ink)]'}`}>
           <Icon kind={kind} className={`size-10 shrink-0 ${muted ? 'text-ink/70' : 'text-crimson'}`} />
-          <h2 id={titleId} className="font-display text-[2.2rem] leading-none">{LABEL[kind]}</h2>
+          <h2 id={titleId} className={`font-display text-[2.2rem] leading-none ${titleClass}`}>{title}</h2>
           <span className="ml-auto pb-0.5 text-right leading-tight">{whose}</span>
           {aside}
         </header>

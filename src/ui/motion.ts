@@ -21,10 +21,18 @@ export function readMs(base: number, isBot: boolean): number {
   return useGame.getState().fastBot ? 0 : base / 2;
 }
 
-/** How long the result of an answer or card stays up for the human (pass it through readMs for the bot). */
-export function feedbackMs({ pending: { kind }, correct }: { pending: Pending; correct?: boolean }): number {
-  if (kind === 'right' || kind === 'whoSaid') return correct ? 1000 : 3000;
-  return kind === 'unfinished' ? 0 : 1500; // Unfinished Liberty was already on screen for 5s.
+/** How long the bot's Right / Who Said It result card stays up before play goes on by itself. */
+export const BOT_RESULT_MS = 6000;
+/** The same with Fast Bot: still long enough for the class to see the answer. */
+export const FAST_BOT_RESULT_MS = 2000;
+
+/**
+ * How long the result of an answer or card stays up; null means until the player presses Continue.
+ * A question's result card always shows, even for the bot with Fast Bot, because it carries the explanation.
+ */
+export function feedbackMs({ kind }: Pending, isBot: boolean): number | null {
+  if (kind === 'right' || kind === 'whoSaid') return !isBot ? null : useGame.getState().fastBot ? FAST_BOT_RESULT_MS : BOT_RESULT_MS;
+  return readMs(kind === 'unfinished' ? 0 : 1500, isBot); // Unfinished Liberty was already on screen until Continue.
 }
 
 /** Time from a roll until its die has landed and the token has finished walking to the card's space. */

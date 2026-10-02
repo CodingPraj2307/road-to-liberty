@@ -6,9 +6,12 @@ export type FounderEffect = 'forward2' | 'reroll' | 'check' | 'stealDuplicate' |
 
 export interface Source { id: SourceId; title: string; url: string }
 export interface Quoted { quote: string; source: SourceId; section: string }
-export interface AmendmentCard extends Quoted { n: Amendment; title: string; summary: string }
+/** `summary`: one short title-like line. `explain`: what it protects, why the founders wanted it, and a modern example. */
+export interface AmendmentCard extends Quoted { n: Amendment; title: string; summary: string; explain: string }
 export interface Clause extends Quoted { title: string; explain: string }
 export interface Grievance extends Quoted { answers: Amendment[]; explain: string }
 export interface FounderCard extends Quoted { speaker: string; effect: FounderEffect; explain: string }
-export interface WhoSaid extends Quoted { choices: [SourceId, SourceId, SourceId] }
-export interface Scenario { amendment: Amendment; prompt: string; choices: [Amendment, Amendment, Amendment]; source: 'bill-of-rights' }
+/** `explain`: who wrote it, when, why, and what it means in plain words. */
+export interface WhoSaid extends Quoted { choices: [SourceId, SourceId, SourceId]; explain: string }
+/** `explain`: why this amendment protects the person, tied to its words, and why a tempting wrong choice does not fit. */
+export interface Scenario { amendment: Amendment; prompt: string; choices: [Amendment, Amendment, Amendment]; source: 'bill-of-rights'; explain: string }
