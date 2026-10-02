@@ -106,3 +106,68 @@ README.md, vite.config.ts, src/App.tsx, src/engine/game.ts (log strings only), s
 ## Concerns
 - Board clipping at 720px could not be checked with the real web fonts in this sandbox (see above).
 - The dialog is `aria-modal`, but with the header buttons now outside `inert`, Tab can reach Full screen and Quit while a card is up. This is intended (Quit must work), but it is not a strict focus trap.
+
+## Fix wave (commit 659c996)
+
+All 7 findings checked against the code first; all were real.
+
+### HIGH
+1. **Layout fit.** Confirmed: at 1280×720 the board ran to 745px (6 tiles and the 1789–91 era clipped). The App play grid and the Board grid now have a single `grid-rows-[minmax(0,1fr)]` row; ols, lis and the relative wrapper get `h-full`/`min-h-0`; tiles and era flags are `overflow-hidden min-h-0`. The Board wrapper is a size container (`@container-size`): tile icons are `clamp(1.25rem,6cqh,2.25rem)` (Start/Finish `clamp(1rem,4cqh,2rem)`), labels `line-clamp-2` (Finish `line-clamp-3`). Era years are 1.5rem on one line ("1787–88" no longer wraps), titles `line-clamp-2`. Label text stays ≥18px. Header `max-height` tweak tried and dropped: the header height is set by the buttons, so a smaller h1 saved ~1px.
+   Playwright (fallback fonts, web fonts blocked), `fit.mjs`, checking every tile/era/label for clipping and overflow:
+   ```
+   1280 720  board bottom 702 / vh 720, clipped 0, overflowing 0, "Bill of Rights Ratified" clamped=false
+   1366 768  board bottom 750 / vh 768, clipped 0, overflowing 0, "Bill of Rights Ratified" clamped=false
+   1920 1080 board bottom 1062 / vh 1080, clipped 0, overflowing 0
+   ```
+
+### MEDIUM
+2. **deploy.yml:** top level `permissions: { contents: read }`; `pages: write, id-token: write` on the deploy job only.
+3. **Save validation.** New `src/store/validate.ts` `isValidGame()`: phase, current, 2 players (name, isBot, pos integer 0–29, hand of 1–10, flags), log, seed, lastRoll, drawn/seen lists, winner vs phase, and `pending` (null outside resolve; in resolve an own-property kind with card index inside that deck, incl. CLAUSES for unfinished). Store persist: `version: 1`, pass-through `migrate` (v0 saves have the same shape, and it avoids zustand's "couldn't be migrated" console error), `merge: mergeSave` which keeps the game only if valid (else `game: null`) and fastBot only if boolean. New `src/ui/ErrorBoundary.tsx` wraps `<Play />`; its "Back to the title screen" button calls `quit()`. Tests: `validate.test.ts` (6) + 3 `mergeSave` tests.
+4. **Animation sync.** Confirmed: `useShownPositions` animated player 0 to completion before player 1, and the roll event's dice wait was consumed by whichever token moved. Now each token has its own `useShownPos(game, who)`; the roll event carries `who`, and only that player's token waits for the die. Board sets a non-persisted store flag `animating` (cleared on unmount and on quit). The bot driver holds its roll while `animating` (only the roll, via `holdRoll`, so a card's timer is not restarted when the bot's own token starts/stops); `useShownPending` also waits for `!animating`.
+   Playwright (`check.mjs`): Player at 28 with no amendments rolls → fails Finish → walks back to 18: human token at 18 @3054ms, bot rolled @3566ms (after the walk + its 500ms), bot token arrived @4224ms, bot card @4278ms — order correct.
+
+### LOW
+5. useKeys: Space does not roll while `feedback` is set (Playwright: Space during feedback → no roll).
+6. CardReveal: window `keydown` Enter listener while a human card with Continue is up (not on Unfinished Liberty or the collectMissing picker, where Enter presses the focused amendment). Playwright: focus on header Quit + Enter → card acknowledged, no confirm() dialog.
+7. Store `answer` requires phase resolve + a right/whoSaid card; `acknowledge` requires phase resolve + a non-question card. 2 tests.
+
+Also verified in Playwright: a damaged save in localStorage → no "Resume game" button; forcing a crash shows the boundary, and its button returns to the title screen.
+
+### Step 4 demo check (`demo.mjs`, 1280×720, keyboard only, Fast Bot on)
+Setup by keys (type name, Tab, Space for Fast Bot, Shift+Tab, Enter); Space to roll, 1–3 to answer (right answer ~70% of the time), Enter to continue.
+```
+end screen: "Ada wins!"   elapsed: 67.7 s   turns (rolls): 39 = 20 human + 19 bot
+questions answered: 10 (6 right)   app console errors/warnings: 0 (blocked web-font requests ignored)
+```
+Estimate with Fast Bot off: 20 human turns × ~12 s = 240 s, plus 19 bot turns × ~3.5 s (500 ms wait, half-speed die and walk, 1.2 s card, half-length feedback) ≈ 67 s → **≈ 5.1 min** (target ≤ 8 min). The engine sim's p90 of 58 turns would be ≈ 29 human × 12 + 29 × 3.5 ≈ 7.5 min.
+Screenshots: `/tmp/claude-0/-home-user/6445930c-a5c6-52f1-b4ff-e216239ef010/scratchpad/demo-board.png`, `/tmp/claude-0/-home-user/6445930c-a5c6-52f1-b4ff-e216239ef010/scratchpad/demo-end.png`.
+
+### Tests
+No component-test harness exists (vitest env node), so the hook changes (4, 5, 6) are covered by the Playwright runs above; logic changes (3, 7) have unit tests.
+
+### Command outputs
+```
+$ npm test
+ Test Files  9 passed (9)
+      Tests  61 passed (61)
+
+$ npm run build
+dist/index.html                   0.81 kB │ gzip:  0.43 kB
+dist/assets/index-BhMON-Ny.css   29.44 kB │ gzip:  6.12 kB
+dist/assets/index-BqQA8zHi.js   282.20 kB │ gzip: 87.98 kB
+✓ built in 384ms
+
+$ npm run verify-quotes
+41/41 verified
+
+$ npm run lint
+(no findings)
+```
+0 lines containing "warn" across the four outputs. Dev server stopped.
+
+### Files changed
+.github/workflows/deploy.yml, src/App.tsx, src/store/{game.ts,game.test.ts,validate.ts,validate.test.ts}, src/ui/{Board.tsx,CardReveal.tsx,ErrorBoundary.tsx,motion.ts,useBotDriver.ts,useKeys.ts}
+
+### Concerns
+- Fit was verified only with fallback fonts (web fonts blocked here); with the real fonts, labels clamp rather than overflow if they run wider.
+- `animating` lives in the store (not persisted); if a future change left a token unable to reach its target, the bot would wait. Today the walk always converges and the flag clears on unmount/quit.
