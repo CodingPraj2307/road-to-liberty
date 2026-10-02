@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { acknowledge, grievanceBlocker } from './game.ts';
+import { acknowledge, answer, grievanceBlocker } from './game.ts';
 import { at } from './testUtils.ts';
 import { GRIEVANCES } from '../data/grievances.ts';
 import { FOUNDERS } from '../data/founders.ts';
@@ -48,6 +48,10 @@ describe('founder effects', () => {
   it('forward2', () => {
     expect(acknowledge(at(2, [], { kind: 'founder', card: founder('forward2') })).players[0].pos).toBe(4);
   });
+  it('forward2 from 28 with 5 different amendments reaches FINISH and wins', () => {
+    const g = acknowledge(at(28, [1, 2, 3, 4, 5], { kind: 'founder', card: founder('forward2') }));
+    expect([g.players[0].pos, g.winner, g.phase]).toEqual([29, 0, 'over']);
+  });
   it('reroll keeps the same player in the roll phase', () => {
     const g = acknowledge(at(2, [], { kind: 'founder', card: founder('reroll') }));
     expect([g.current, g.phase]).toEqual([0, 'roll']);
@@ -62,6 +66,15 @@ describe('founder effects', () => {
     expect(g.players[0].hand).toEqual([2]);
     expect(g.players[1].hand.sort()).toEqual([2, 5, 5]);
   });
+  it('stealDuplicate while Checked cancels the steal and keeps the opponent\'s card', () => {
+    const s = at(2, [], { kind: 'founder', card: founder('stealDuplicate') });
+    s.players[1].hand = [5, 5, 2, 2];
+    s.players[0].blockNextGain = true;
+    const g = acknowledge(s);
+    expect(g.players[0].hand).toEqual([]);
+    expect(g.players[0].blockNextGain).toBe(false);
+    expect([...g.players[1].hand].sort()).toEqual([2, 2, 5, 5]);
+  });
   it('stealDuplicate with no duplicates moves forward 1', () => {
     expect(acknowledge(at(2, [], { kind: 'founder', card: founder('stealDuplicate') })).players[0].pos).toBe(3);
   });
@@ -74,5 +87,19 @@ describe('founder effects', () => {
   });
   it('rejects acknowledge when a question is pending', () => {
     expect(() => acknowledge(at(1, [], { kind: 'right', card: 0 }))).toThrow();
+  });
+});
+
+describe('purity', () => {
+  it('answer and acknowledge do not mutate their input', () => {
+    const q = at(1, [], { kind: 'right', card: 0 });
+    const q0 = structuredClone(q);
+    answer(q, true);
+    expect(q).toEqual(q0);
+    const f = at(2, [], { kind: 'founder', card: founder('stealDuplicate') });
+    f.players[1].hand = [5, 5];
+    const f0 = structuredClone(f);
+    acknowledge(f);
+    expect(f).toEqual(f0);
   });
 });

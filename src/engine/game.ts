@@ -123,7 +123,8 @@ export function acknowledge(s: GameState, pick?: Amendment): GameState {
       case 'stealDuplicate': {
         const o = opp(g);
         const dup = ALL.find(a => o.hand.filter(x => x === a).length >= 2);
-        if (dup) { o.hand.splice(o.hand.indexOf(dup), 1); gain(g, g.current, dup); }
+        if (dup && p.blockNextGain) { p.blockNextGain = false; g.log.push(`Checked! ${p.name} cannot steal the ${ord(dup)} Amendment.`); }
+        else if (dup) { o.hand.splice(o.hand.indexOf(dup), 1); gain(g, g.current, dup); }
         else moveBy(g, 1);
         break;
       }
