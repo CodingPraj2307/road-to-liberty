@@ -37,27 +37,37 @@ export function Icon({ kind, className }: { kind: SpaceKind; className: string }
 // The route line threads through every space centre in path order.
 const ROUTE = BOARD.map((_, i) => { const { row, col } = cellOf(i); return `${col + 0.5},${row + 0.5}`; }).join(' ');
 
-/** Token positions as shown on screen: they walk one space at a time toward the real position. */
-function useShownPositions(game: GameState): [number, number] {
-  const t0 = game.players[0].pos, t1 = game.players[1].pos;
+/**
+ * One token's position as shown on screen: it walks one space at a time toward the real position.
+ * Each token walks on its own clock, so one player's long walk never holds up the other's.
+ */
+function useShownPos(game: GameState, who: 0 | 1): number {
+  const target = game.players[who].pos;
   const roll = useRollEvent();
   const seenRoll = useRef(roll?.id);
-  const [shown, setShown] = useState<[number, number]>([t0, t1]);
+  const [shown, setShown] = useState(target);
   useEffect(() => {
-    const target = [t0, t1] as const;
-    const i = shown[0] !== t0 ? 0 : 1;
-    if (shown[i] === target[i]) return;
-    const ms = animMs(STEP_MS, useGame.getState().game!.players[i].isBot);
+    if (shown === target) return;
+    const ms = animMs(STEP_MS, useGame.getState().game!.players[who].isBot);
     let wait = ms;
-    // A roll's move starts once the die has landed.
-    if (roll && roll.id !== seenRoll.current) { seenRoll.current = roll.id; wait = animMs(DICE_MS, roll.bot); }
-    const t = setTimeout(() => setShown(s => {
-      const n: [number, number] = [s[0], s[1]];
-      n[i] = ms ? n[i] + Math.sign(target[i] - n[i]) : target[i];
-      return n;
-    }), wait);
+    // This player's roll moves the token once the die has landed.
+    if (roll && roll.id !== seenRoll.current) {
+      seenRoll.current = roll.id;
+      if (roll.who === who) wait = animMs(DICE_MS, roll.bot);
+    }
+    const t = setTimeout(() => setShown(n => (ms ? n + Math.sign(target - n) : target)), wait);
     return () => clearTimeout(t);
-  }, [shown, t0, t1, roll]);
+  }, [shown, target, roll, who]);
+  return shown;
+}
+
+/** Both tokens as shown, and the store's `animating` flag kept in step (the bot waits on it before rolling). */
+function useShownPositions(game: GameState): [number, number] {
+  const shown: [number, number] = [useShownPos(game, 0), useShownPos(game, 1)];
+  const moving = shown[0] !== game.players[0].pos || shown[1] !== game.players[1].pos;
+  const setAnimating = useGame(s => s.setAnimating);
+  useEffect(() => setAnimating(moving), [moving, setAnimating]);
+  useEffect(() => () => setAnimating(false), [setAnimating]);
   return shown;
 }
 
@@ -66,25 +76,26 @@ export function Board() {
   const shown = useShownPositions(game);
 
   return (
-    <div className="grid min-h-0 flex-1 grid-cols-[7.75rem_1fr]">
-      <ol className="grid grid-rows-5" aria-label="Eras">
+    // A size container, so icons scale with the board's height (cqh) and every row fits at 1280x720 whatever the font.
+    <div className="grid min-h-0 flex-1 grid-cols-[7.75rem_minmax(0,1fr)] grid-rows-[minmax(0,1fr)] @container-size">
+      <ol className="grid h-full min-h-0 grid-rows-5" aria-label="Eras">
         {ERAS.map((e, k) => (
-          <li key={e.year} className="py-[5px]">
-            <div className={`${ERA_BG[k]} flex h-full flex-col justify-center rounded-l-md py-1 pr-3 pl-5 text-cream [clip-path:polygon(0_0,100%_0,100%_100%,0_100%,0.75rem_50%)]`}>
-              <span className="font-display text-[1.75rem] leading-none">{e.year}</span>
-              <span className="mt-1 leading-tight">{e.title}</span>
+          <li key={e.year} className="min-h-0 py-[5px]">
+            <div className={`${ERA_BG[k]} flex h-full flex-col justify-center overflow-hidden rounded-l-md py-1 pr-2 pl-5 text-cream [clip-path:polygon(0_0,100%_0,100%_100%,0_100%,0.75rem_50%)]`}>
+              <span className="font-display text-[1.5rem] leading-none whitespace-nowrap">{e.year}</span>
+              <span className="mt-1 line-clamp-2 leading-tight">{e.title}</span>
             </div>
           </li>
         ))}
       </ol>
 
-      <div className="relative">
+      <div className="relative h-full min-h-0">
         <svg viewBox="0 0 6 5" preserveAspectRatio="none" aria-hidden="true" className="absolute inset-0 h-full w-full">
           <polyline points={ROUTE} fill="none" stroke="var(--color-ink)" strokeWidth="5"
             strokeDasharray="2 7" strokeLinecap="round" vectorEffect="non-scaling-stroke" opacity="0.55" />
         </svg>
 
-        <ol className="relative grid h-full grid-cols-6 grid-rows-5" aria-label="Board">
+        <ol className="relative grid h-full min-h-0 grid-cols-6 grid-rows-5" aria-label="Board">
           {BOARD.map((s, i) => {
             const { row, col } = cellOf(i);
             const special = s.kind === 'start' || s.kind === 'finish';
@@ -92,17 +103,17 @@ export function Board() {
             const here = game.players.filter((_, p) => shown[p] === i).map(p => p.name);
             return (
               <li key={i} aria-label={`Space ${i}, Era ${s.era}, ${LABEL[s.kind]}${here.length ? `: ${here.join(' and ')} here` : ''}`}
-                style={{ gridRow: row + 1, gridColumn: col + 1 }} className="p-[5px]">
+                style={{ gridRow: row + 1, gridColumn: col + 1 }} className="min-h-0 p-[5px]">
                 <div
-                  className={`flex h-full flex-col items-center rounded-md border-2 px-1 pt-0.5 pb-1 text-center shadow-[0_2px_0_color-mix(in_oklab,var(--color-ink)_35%,transparent)] ${
+                  className={`flex h-full min-h-0 flex-col items-center overflow-hidden rounded-md border-2 px-1 pt-0.5 pb-1 text-center shadow-[0_2px_0_color-mix(in_oklab,var(--color-ink)_35%,transparent)] ${
                     special
                       ? `${s.kind === 'start' ? 'bg-navy border-navy' : 'bg-crimson border-crimson'} text-cream`
                       : `${ERA_BORDER[s.era - 1]} border-t-[6px] text-ink`}`}
                   style={special ? undefined : { background: `color-mix(in oklab, var(--color-era-${s.era}) 14%, var(--color-parchment-light))` }}
                 >
                   {!special && <span aria-hidden="true" className="self-start pl-0.5 font-bold leading-none tabular-nums">{i}</span>}
-                  <Icon kind={s.kind} className={`my-auto ${special ? 'size-8' : `size-9 ${ERA_TEXT[s.era - 1]}`}`} />
-                  <span className={`font-bold leading-[1.1] ${s.kind === 'finish' ? 'font-display text-[1.15rem] font-normal' : ''}`}>
+                  <Icon kind={s.kind} className={`my-auto shrink ${special ? 'size-[clamp(1rem,4cqh,2rem)]' : `size-[clamp(1.25rem,6cqh,2.25rem)] ${ERA_TEXT[s.era - 1]}`}`} />
+                  <span className={`font-bold leading-[1.1] ${s.kind === 'finish' ? 'line-clamp-3 font-display text-[1.15rem] font-normal' : 'line-clamp-2'}`}>
                     {LABEL[s.kind]}
                   </span>
                 </div>

@@ -46,6 +46,19 @@ export function CardReveal() {
     return () => clearTimeout(t);
   }, [kind, player.isBot, acknowledge]);
 
+  // Enter continues from anywhere while the card is up, so it can never press a header button (Quit) instead.
+  const hasContinue = !player.isBot && kind !== 'unfinished' && !(kind === 'founder' && FOUNDERS[card].effect === 'collectMissing');
+  useEffect(() => {
+    if (!hasContinue) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Enter' || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+      e.preventDefault();
+      acknowledge();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [hasContinue, acknowledge]);
+
   const cont = !player.isBot && (
     <button type="button" autoFocus onClick={() => acknowledge()}
       className="mt-5 cursor-pointer self-end rounded-md border-2 border-navy bg-navy px-5 py-2 text-lg font-bold text-cream shadow-[0_3px_0_var(--color-ink)] active:translate-y-[2px] active:shadow-[0_1px_0_var(--color-ink)]">

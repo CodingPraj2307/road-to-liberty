@@ -33,16 +33,17 @@ export function cardDelayMs(g: GameState): number {
   return animMs(DICE_MS, isBot) + (g.lastRoll ?? 0) * animMs(STEP_MS, isBot);
 }
 
-/** The pending card, once the animations that led to it have finished; null until then. */
+/** The pending card, once the animations that led to it have finished (and no token is still moving); null until then. */
 export function useShownPending(): Pending | null {
   const pending = useGame(s => s.game?.pending ?? null);
+  const animating = useGame(s => s.animating);
   const [shown, setShown] = useState<Pending | null>(null);
   useEffect(() => {
     if (!pending) return;
     const t = setTimeout(() => setShown(pending), cardDelayMs(useGame.getState().game!));
     return () => clearTimeout(t);
   }, [pending]);
-  return shown === pending ? pending : null;
+  return shown === pending && !animating ? pending : null;
 }
 
 /** Display name of each kind of space, shared by the board and the cards. */
@@ -57,14 +58,14 @@ export function cellOf(i: number) {
   return { row, col: row % 2 ? 5 - (i % 6) : i % 6 };
 }
 
-/** Bumps `id` each time a die is rolled; `bot` tells whose roll it was. */
+/** Bumps `id` each time a die is rolled; `who` and `bot` tell whose roll it was. */
 export function useRollEvent() {
-  const [ev, setEv] = useState<{ id: number; bot: boolean } | null>(null);
+  const [ev, setEv] = useState<{ id: number; who: 0 | 1; bot: boolean } | null>(null);
   useEffect(() => useGame.subscribe((s, prev) => {
     const p = prev.game;
     // In the roll phase the only game change that grows the log is roll().
     if (p?.phase === 'roll' && s.game && s.game.log.length > p.log.length)
-      setEv(e => ({ id: (e?.id ?? 0) + 1, bot: p.players[p.current].isBot }));
+      setEv(e => ({ id: (e?.id ?? 0) + 1, who: p.current, bot: p.players[p.current].isBot }));
   }), []);
   return ev;
 }

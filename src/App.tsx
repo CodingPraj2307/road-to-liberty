@@ -13,6 +13,7 @@ import { Feedback } from './ui/Feedback.tsx';
 import { Setup, SECONDARY } from './ui/Setup.tsx';
 import { EndScreen } from './ui/EndScreen.tsx';
 import { cardDelayMs, useShownPending } from './ui/motion.ts';
+import { GameErrorBoundary } from './ui/ErrorBoundary.tsx';
 
 /** How long the final board stays up after the winning move lands, before the recap. */
 const END_HOLD_MS = 1500;
@@ -51,7 +52,7 @@ function Play() {
       <Header canQuit inert={covered}>
         <p className="pb-1 text-right leading-tight">Win: reach Ratified with <b>5 different</b> Amendments</p>
       </Header>
-      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,7fr)_minmax(0,3fr)] gap-4 pt-2">
+      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,7fr)_minmax(0,3fr)] grid-rows-[minmax(0,1fr)] gap-4 pt-2">
         <main className="relative flex min-h-0 flex-col">
           <div inert={covered} className="flex min-h-0 flex-1 flex-col"><Board /></div>
           {/* Keyed by log length so every new card remounts with a fresh timer and shuffle. */}
@@ -87,7 +88,7 @@ export default function App() {
   const screen = !game || !playing ? 'setup' : ended === game ? 'end' : 'play';
   useKeys(screen === 'play');
 
-  if (screen === 'play') return <Play />;
+  if (screen === 'play') return <GameErrorBoundary><Play /></GameErrorBoundary>;
   return (
     <div className="min-h-dvh p-4">
       <Header title={screen !== 'setup'} canQuit={screen !== 'setup'} />
