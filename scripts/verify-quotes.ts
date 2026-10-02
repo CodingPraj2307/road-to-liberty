@@ -4,16 +4,16 @@ import { quoteFound } from '../src/data/quote.ts';
 import { AMENDMENTS } from '../src/data/amendments.ts';
 import { CLAUSES } from '../src/data/clauses.ts';
 import { GRIEVANCES } from '../src/data/grievances.ts';
-// import { FOUNDERS } from '../src/data/founders.ts'; // enabled in Task 4
-// import { WHO_SAID } from '../src/data/whoSaid.ts'; // enabled in Task 4
+import { FOUNDERS } from '../src/data/founders.ts';
+import { WHO_SAID } from '../src/data/whoSaid.ts';
 import type { Quoted } from '../src/data/types.ts';
 
 const items: (Quoted & { label: string })[] = [
   ...AMENDMENTS.map(a => ({ ...a, label: `Amendment ${a.n}` })),
   ...CLAUSES.map(c => ({ ...c, label: `Unfinished: ${c.title}` })),
   ...GRIEVANCES.map((g, i) => ({ ...g, label: `Grievance ${i + 1}` })),
-  // ...FOUNDERS.map(f => ({ ...f, label: `Founder: ${f.speaker}` })), // enabled in Task 4
-  // ...WHO_SAID.map((w, i) => ({ ...w, label: `Who Said It ${i + 1}` })), // enabled in Task 4
+  ...FOUNDERS.map(f => ({ ...f, label: `Founder: ${f.speaker}` })),
+  ...WHO_SAID.map((w, i) => ({ ...w, label: `Who Said It ${i + 1}` })),
 ];
 const url = Object.fromEntries(SOURCES.map(s => [s.id, s.url]));
 const text = Object.fromEntries(SOURCES.map(s => [s.id, readFileSync(`sources-cache/${s.id}.txt`, 'utf8')]));
